@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 final CAMERA_DEFAULT_OPTIONS = CameraOptions(
@@ -6,8 +8,16 @@ final CAMERA_DEFAULT_OPTIONS = CameraOptions(
     padding: MbxEdgeInsets(bottom: 1, top: 400, left: 1, right: 1),
     pitch: 50);
 
-CameraOptions cameraDefaultWith(double longitude, double latitude) {
+CameraOptions cameraDefaultWith(Point? center) {
   CameraOptions camera = CAMERA_DEFAULT_OPTIONS;
-  camera.center = Point(coordinates: Position(longitude, latitude));
+  if (center != null) camera.center = center;
   return camera;
+}
+
+String getPuckLayerName() {
+  if (Platform.isAndroid) {
+    return "mapbox-location-indicator-layer";
+  }
+
+  return 'puck';
 }

@@ -36,7 +36,7 @@ class _HomeState extends State<Home> {
         builder: (context, store) {
           return Scaffold(
             body: LayoutBuilder(builder: (context, constraints) {
-              if (store.state.userLocation == null) {
+              if (!store.state.hasLocationPermissions) {
                 return const Center(
                   child: Text(
                     'Fetching your location...',

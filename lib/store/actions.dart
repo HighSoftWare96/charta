@@ -1,4 +1,5 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 class RequestLocationAction {
   void Function(Object e)? onError;
@@ -11,10 +12,18 @@ class ToggleMapModeAction {}
 
 class MapCameraChangesByUserAction {}
 
-class RequestLocationActionSuccess {
-  Position location;
+class MapBoundsUpdateAction {
+  CameraState camera;
 
-  RequestLocationActionSuccess({required this.location});
+  MapBoundsUpdateAction(this.camera);
+}
+
+class RequestLocationActionSuccess {}
+
+class UserLocationUpdateAction {
+  Point location;
+
+  UserLocationUpdateAction(this.location);
 }
 
 class _ErrorAction {

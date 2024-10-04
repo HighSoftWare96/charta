@@ -1,3 +1,4 @@
+import 'package:Charta/services/geolocator.dart';
 import 'package:Charta/services/mapTracker.dart';
 import 'package:Charta/store/actions.dart';
 import 'package:Charta/store/reducer.dart';
@@ -43,11 +44,17 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
     await mapboxMap!.scaleBar.updateSettings(ScaleBarSettings(enabled: false));
 
     _setBearingMode(state);
+    _subscribeToLocation();
   }
 
   void _onUserChangesCamera(dynamic event) {
     StoreProvider.of<AppState>(context)
         .dispatch(MapCameraChangesByUserAction());
+  }
+
+  void _onCameraChanges(CameraChangedEventData event) async {
+    final camera = await tracker.map!.getCameraState();
+    StoreProvider.of<AppState>(context).dispatch(MapBoundsUpdateAction(camera));
   }
 
   _setBearingMode(AppState state) {
@@ -64,14 +71,19 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
     mapboxMap!.location.updateSettings(locationSettings!);
   }
 
+  _subscribeToLocation() {
+    geolocator.subscribe((location) {
+      StoreProvider.of<AppState>(context)
+          .dispatch(UserLocationUpdateAction(location));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return StoreConnector(
       converter: (Store<AppState> store) => store,
       builder: (context, store) {
-        CameraOptions camera = cameraDefaultWith(
-            store.state.userLocation!.longitude,
-            store.state.userLocation!.latitude);
+        CameraOptions camera = cameraDefaultWith(store.state.userLocation);
 
         _setBearingMode(store.state);
 
@@ -82,6 +94,7 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
           onScrollListener: _onUserChangesCamera,
           onTapListener: _onUserChangesCamera,
           onMapCreated: (map) => _onMapCreated(store.state, map),
+          onCameraChangeListener: _onCameraChanges,
         );
       },
     );
