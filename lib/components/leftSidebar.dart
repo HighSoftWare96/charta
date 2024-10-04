@@ -40,7 +40,7 @@ class _LeftSidebarWidgetState extends State<LeftSidebarWidget> {
                                 ? Icons.route
                                 : Icons.navigation,
                             color: store.state.mapMode == MapMode.centered
-                                ? (store.state.gpxLoaded
+                                ? (store.state.gpxLoaded != null
                                     ? Colors.black38
                                     : Colors.black26)
                                 : const Color(0xff4281A4)),

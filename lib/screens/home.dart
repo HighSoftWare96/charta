@@ -1,3 +1,5 @@
+import 'package:Charta/components/filePicker.dart';
+import 'package:Charta/components/homeSettings.dart';
 import 'package:Charta/components/leftSidebar.dart';
 import 'package:Charta/components/map.dart';
 import 'package:Charta/store/actions.dart';
@@ -49,15 +51,17 @@ class _HomeState extends State<Home> {
                 children: [
                   const MapWidgetWrapper(),
                   const LeftSidebarWidget(),
-                  Positioned.fill(
-                      top: constraints.maxHeight * 0.9,
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20))),
-                      ))
+                  DraggableScrollableSheet(
+                    snap: true,
+                    initialChildSize: .15,
+                    minChildSize: .15,
+                    builder: (context, scrollController) {
+                      return SingleChildScrollView(
+                        controller: scrollController,
+                        child: HomeSettings(),
+                      );
+                    },
+                  )
                 ],
               );
             }),

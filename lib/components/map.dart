@@ -62,7 +62,7 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
       return;
     }
 
-    if (state.gpxLoaded) {
+    if (state.gpxLoaded != null) {
       locationSettings!.puckBearing = PuckBearing.COURSE;
     } else {
       locationSettings!.puckBearing = PuckBearing.HEADING;

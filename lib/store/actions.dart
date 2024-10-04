@@ -1,4 +1,4 @@
-import 'package:geolocator/geolocator.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 class RequestLocationAction {
@@ -37,3 +37,11 @@ class RequestLocationActionError extends _ErrorAction {
 }
 
 class DisposeApp {}
+
+class UnloadGPXFileAction {}
+
+class LoadGPXFileAction {
+  PlatformFile file;
+
+  LoadGPXFileAction(this.file);
+}
