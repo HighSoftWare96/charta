@@ -25,19 +25,19 @@ class MapState {
 
 MapState mapReducer(RootState state, dynamic action) {
   if (action is ToggleMapModeAction) {
-    return MapState.copyWith(state.map,
-        mode: (state.map.mode == MapMode.centered
-            ? (state.gpx.file != null
+    return MapState.copyWith(state.mapFeature,
+        mode: (state.mapFeature.mode == MapMode.centered
+            ? (state.gpxFeature.file != null
                 ? const StoreValue.of(MapMode.fitGpx)
                 : const StoreValue.of(MapMode.centered))
             : const StoreValue.of(MapMode.centered)));
   } else if (action is MapCameraChangesByUserAction) {
-    return MapState.copyWith(state.map,
+    return MapState.copyWith(state.mapFeature,
         mode: const StoreValue.of(MapMode.free));
   } else if (action is MapBoundsUpdateAction) {
-    return MapState.copyWith(state.map,
+    return MapState.copyWith(state.mapFeature,
         cameraState: StoreValue.of(action.camera));
   }
 
-  return state.map;
+  return state.mapFeature;
 }

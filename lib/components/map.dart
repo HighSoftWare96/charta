@@ -2,7 +2,6 @@ import 'package:Charta/features/location/actions.dart';
 import 'package:Charta/features/map/actions.dart';
 import 'package:Charta/services/geolocator.dart';
 import 'package:Charta/services/mapTracker.dart';
-import 'package:Charta/store/actions.dart';
 import 'package:Charta/store/reducer.dart';
 import 'package:Charta/utils/defaults.dart';
 import 'package:flutter/material.dart';
@@ -65,7 +64,7 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
       return;
     }
 
-    if (state.gpx.file != null) {
+    if (state.gpxFeature.file != null) {
       locationSettings!.puckBearing = PuckBearing.COURSE;
     } else {
       locationSettings!.puckBearing = PuckBearing.HEADING;
@@ -87,7 +86,7 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
       converter: (Store<RootState> store) => store,
       builder: (context, store) {
         CameraOptions camera =
-            cameraDefaultWith(store.state.location.userLocation);
+            cameraDefaultWith(store.state.locationFeature.userLocation);
 
         _setBearingMode(store.state);
 

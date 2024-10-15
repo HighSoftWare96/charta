@@ -37,11 +37,11 @@ class _LeftSidebarWidgetState extends State<LeftSidebarWidget> {
                             padding: const EdgeInsets.all(20),
                             backgroundColor: const Color(0xfff4f2f0)),
                         child: Icon(
-                            store.state.map.mode == MapMode.centered
+                            store.state.mapFeature.mode == MapMode.centered
                                 ? Icons.route
                                 : Icons.navigation,
-                            color: store.state.map.mode == MapMode.centered
-                                ? (store.state.gpx.file != null
+                            color: store.state.mapFeature.mode == MapMode.centered
+                                ? (store.state.gpxFeature.file != null
                                     ? Colors.black38
                                     : Colors.black26)
                                 : const Color(0xff4281A4)),

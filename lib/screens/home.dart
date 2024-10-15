@@ -39,7 +39,7 @@ class _HomeState extends State<Home> {
         builder: (context, store) {
           return Scaffold(
             body: LayoutBuilder(builder: (context, constraints) {
-              if (store.state.location.permissionsState ==
+              if (store.state.locationFeature.permissionsState ==
                   LocationPermissionState.pending) {
                 return const Center(
                   child: Text(
@@ -47,7 +47,7 @@ class _HomeState extends State<Home> {
                     textAlign: TextAlign.center,
                   ),
                 );
-              } else if (store.state.location.permissionsState ==
+              } else if (store.state.locationFeature.permissionsState ==
                   LocationPermissionState.refused) {
                 return const Center(
                   child: Text(

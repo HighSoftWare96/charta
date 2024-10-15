@@ -3,19 +3,19 @@ import 'package:Charta/features/location/reducer.dart';
 import 'package:Charta/features/map/reducer.dart';
 
 class RootState {
-  final GPXState gpx;
-  final LocationState location;
-  final MapState map;
+  final GPXState gpxFeature;
+  final LocationState locationFeature;
+  final MapState mapFeature;
 
   RootState.initialState()
-      : gpx = GPXState.initialState(),
-        location = LocationState.initialState(),
-        map = MapState.initialState();
+      : gpxFeature = GPXState.initialState(),
+        locationFeature = LocationState.initialState(),
+        mapFeature = MapState.initialState();
 
-  RootState({required this.gpx, required this.location, required this.map});
+  RootState({required this.gpxFeature, required this.locationFeature, required this.mapFeature});
 }
 
 RootState rootReducer(RootState state, dynamic action) => RootState(
-    gpx: gpxReducer(state, action),
-    location: locationReducer(state, action),
-    map: mapReducer(state, action));
+    gpxFeature: gpxReducer(state, action),
+    locationFeature: locationReducer(state, action),
+    mapFeature: mapReducer(state, action));

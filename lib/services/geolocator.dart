@@ -18,7 +18,7 @@ class GeoLocatorHelper {
     }
 
     _subscription = _createMapStream().listen((data) {
-      if (data != null) onUpdate(data!);
+      if (data != null) onUpdate(data);
     });
   }
 
@@ -29,7 +29,7 @@ class GeoLocatorHelper {
   }
 
   Stream<Point?> _createMapStream() {
-    return Stream.periodic(const Duration(milliseconds: 500), (_) async {
+    return Stream.periodic(const Duration(milliseconds: 2000), (_) async {
       final layerExists =
           await tracker.map!.style.styleLayerExists(puckLayerName);
 
