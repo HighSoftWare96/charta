@@ -1,3 +1,5 @@
+import 'package:Charta/features/location/actions.dart';
+import 'package:Charta/features/map/actions.dart';
 import 'package:Charta/services/geolocator.dart';
 import 'package:Charta/services/mapTracker.dart';
 import 'package:Charta/store/actions.dart';
@@ -22,7 +24,7 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
 
   CameraOptions defaultCameraOptions = CAMERA_DEFAULT_OPTIONS;
 
-  void _onMapCreated(AppState state, MapboxMap map) async {
+  void _onMapCreated(RootState state, MapboxMap map) async {
     mapboxMap = map;
     tracker.track(map);
 
@@ -48,21 +50,22 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
   }
 
   void _onUserChangesCamera(dynamic event) {
-    StoreProvider.of<AppState>(context)
+    StoreProvider.of<RootState>(context)
         .dispatch(MapCameraChangesByUserAction());
   }
 
   void _onCameraChanges(CameraChangedEventData event) async {
     final camera = await tracker.map!.getCameraState();
-    StoreProvider.of<AppState>(context).dispatch(MapBoundsUpdateAction(camera));
+    StoreProvider.of<RootState>(context)
+        .dispatch(MapBoundsUpdateAction(camera));
   }
 
-  _setBearingMode(AppState state) {
+  _setBearingMode(RootState state) {
     if (mapboxMap == null || locationSettings == null) {
       return;
     }
 
-    if (state.gpxLoaded != null) {
+    if (state.gpx.file != null) {
       locationSettings!.puckBearing = PuckBearing.COURSE;
     } else {
       locationSettings!.puckBearing = PuckBearing.HEADING;
@@ -73,7 +76,7 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
 
   _subscribeToLocation() {
     geolocator.subscribe((location) {
-      StoreProvider.of<AppState>(context)
+      StoreProvider.of<RootState>(context)
           .dispatch(UserLocationUpdateAction(location));
     });
   }
@@ -81,9 +84,10 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
   @override
   Widget build(BuildContext context) {
     return StoreConnector(
-      converter: (Store<AppState> store) => store,
+      converter: (Store<RootState> store) => store,
       builder: (context, store) {
-        CameraOptions camera = cameraDefaultWith(store.state.userLocation);
+        CameraOptions camera =
+            cameraDefaultWith(store.state.location.userLocation);
 
         _setBearingMode(store.state);
 

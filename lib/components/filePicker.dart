@@ -1,4 +1,4 @@
-import 'package:Charta/store/actions.dart';
+import 'package:Charta/features/gpx/actions.dart';
 import 'package:Charta/store/reducer.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -19,18 +19,18 @@ class _FilePickerWidgetState extends State<FilePickerWidget> {
 
     if (result != null && result.files[0].extension == 'gpx') {
       final file = result.files[0];
-      StoreProvider.of<AppState>(context).dispatch(LoadGPXFileAction(file));
+      StoreProvider.of<RootState>(context).dispatch(LoadGPXFileAction(file));
     }
   }
 
   _unsetFile() {
-    StoreProvider.of<AppState>(context).dispatch(UnloadGPXFileAction());
+    StoreProvider.of<RootState>(context).dispatch(UnloadGPXFileAction());
   }
 
   @override
   Widget build(BuildContext context) {
     return StoreConnector(
-      converter: (Store<AppState> store) => store,
+      converter: (Store<RootState> store) => store,
       builder: (context, store) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -38,7 +38,7 @@ class _FilePickerWidgetState extends State<FilePickerWidget> {
             Row(children: [
               Icon(
                 Icons.map,
-                color: store.state.gpxLoaded != null
+                color: store.state.gpx.file != null
                     ? const Color(0xff4281A4)
                     : Colors.black26,
               ),
@@ -48,18 +48,18 @@ class _FilePickerWidgetState extends State<FilePickerWidget> {
               Container(
                 constraints: BoxConstraints(maxWidth: 200),
                 child: Text(
-                  store.state.gpxLoaded != null
-                      ? store.state.gpxLoaded!.file.name
+                  store.state.gpx.file != null
+                      ? store.state.gpx.file!.file.name
                       : 'Choose GPX file...',
                   overflow: TextOverflow.ellipsis,
-                  style: store.state.gpxLoaded != null
+                  style: store.state.gpx.file != null
                       ? const TextStyle(
                           color: Color(0xff4281A4), fontWeight: FontWeight.bold)
                       : const TextStyle(color: Colors.black26),
                 ),
               )
             ]),
-            store.state.gpxLoaded != null
+            store.state.gpx.file != null
                 ? IconButton(
                     icon: const Icon(
                       Icons.close,

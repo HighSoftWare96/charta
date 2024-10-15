@@ -5,6 +5,9 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 import 'package:redux/redux.dart';
 import "package:Charta/store/middlewares.dart";
+import "package:Charta/features/gpx/middlewares.dart";
+import "package:Charta/features/map/middlewares.dart";
+import "package:Charta/features/location/middlewares.dart";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,8 +19,14 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final store = Store(reducer,
-      initialState: AppState.initialState(), middleware: [middleware]);
+  final store = Store(rootReducer,
+      initialState: RootState.initialState(),
+      middleware: [
+        rootMiddleware,
+        locationMiddleware,
+        gpxMiddleware,
+        mapMiddleware
+      ]);
 
   MyApp({super.key});
 

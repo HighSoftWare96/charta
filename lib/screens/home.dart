@@ -1,7 +1,8 @@
-import 'package:Charta/components/filePicker.dart';
 import 'package:Charta/components/homeSettings.dart';
 import 'package:Charta/components/leftSidebar.dart';
 import 'package:Charta/components/map.dart';
+import 'package:Charta/features/location/actions.dart';
+import 'package:Charta/features/location/reducer.dart';
 import 'package:Charta/store/actions.dart';
 import 'package:Charta/store/reducer.dart';
 import 'package:Charta/utils/hooks.dart';
@@ -21,27 +22,36 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     onFirstBuild((_) {
-      StoreProvider.of<AppState>(context).dispatch(RequestLocationAction());
+      StoreProvider.of<RootState>(context).dispatch(RequestLocationAction());
     });
   }
 
   @override
   void dispose() {
-    StoreProvider.of<AppState>(context).dispatch(DisposeApp());
+    StoreProvider.of<RootState>(context).dispatch(DisposeApp());
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return StoreConnector(
-        converter: (Store<AppState> store) => store,
+        converter: (Store<RootState> store) => store,
         builder: (context, store) {
           return Scaffold(
             body: LayoutBuilder(builder: (context, constraints) {
-              if (!store.state.hasLocationPermissions) {
+              if (store.state.location.permissionsState ==
+                  LocationPermissionState.pending) {
                 return const Center(
                   child: Text(
                     'Fetching your location...',
+                    textAlign: TextAlign.center,
+                  ),
+                );
+              } else if (store.state.location.permissionsState ==
+                  LocationPermissionState.refused) {
+                return const Center(
+                  child: Text(
+                    'Please ensure location permissions are granted!',
                     textAlign: TextAlign.center,
                   ),
                 );
