@@ -3,8 +3,11 @@ import 'package:Charta/features/location/actions.dart';
 import 'package:Charta/store/reducer.dart';
 import 'package:Charta/utils/redux.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
+import 'package:turf/turf.dart' as turf;
 
 enum LocationPermissionState { refused, accepted, pending }
+
+const RECORD_MIN_DISTANCE_METERS = 20;
 
 class LocationState {
   final LocationPermissionState _permissionState;
@@ -48,7 +51,13 @@ LocationState locationReducer(RootState state, dynamic action) {
   } else if (action is UserLocationUpdateAction) {
     final recorded = state.locationFeature.userRecordedTrack;
 
-    if (state.gpxFeature.gpx != null) {
+    if (state.gpxFeature.gpx != null &&
+        (recorded.geometry!.coordinates.isEmpty ||
+            turf.distance(
+                    Point(coordinates: recorded.geometry!.coordinates.last),
+                    action.location,
+                    Unit.meters) >
+                RECORD_MIN_DISTANCE_METERS)) {
       recorded.geometry!.coordinates.add(action.location.coordinates);
     }
 

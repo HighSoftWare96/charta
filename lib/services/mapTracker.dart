@@ -64,6 +64,37 @@ class MapTracker {
         lineJoin: LineJoin.ROUND,
         lineCap: LineCap.ROUND,
         lineWidth: 20));
+
+    helperLineSource ??=
+        await _upsertSource(GeoJsonSource(id: TRACK_HELPER_SOURCE_NAME));
+    helperPointsSource ??=
+        await _upsertSource(GeoJsonSource(id: TRACK_HELPER_POINTS_SOURCE_NAME));
+
+    helperLineLayer ??= await _upsertLayer(LineLayer(
+        id: TRACK_HELPER_LINE_LAYER_NAME,
+        sourceId: TRACK_HELPER_SOURCE_NAME,
+        lineColor: const Color(0xffD4B483).value,
+        lineDasharray: [2, 2],
+        lineJoin: LineJoin.ROUND,
+        lineCap: LineCap.ROUND,
+        lineWidth: 5));
+    helperPointsLayer ??= await _upsertLayer(CircleLayer(
+        id: TRACK_HELPER_POINTS_LAYER_NAME,
+        sourceId: TRACK_HELPER_POINTS_SOURCE_NAME,
+        circleColor: const Color(0xffD4B483).value,
+        circleStrokeColor: const Color(0xffE4DFDA).value,
+        circleStrokeWidth: 2,
+        circleRadius: 6));
+
+    userRecordedSource ??=
+        await _upsertSource(GeoJsonSource(id: USER_SOURCE_NAME));
+    userRecordedLayer ??= await _upsertLayer(LineLayer(
+        id: USER_LAYER_NAME,
+        sourceId: USER_SOURCE_NAME,
+        lineColor: const Color(0xffC1666B).value,
+        lineJoin: LineJoin.ROUND,
+        lineCap: LineCap.ROUND,
+        lineWidth: 20));
   }
 
   updateGPX(GeoJSONGPX gpx, Point userLocation, bool forceBearing) async {
@@ -85,29 +116,8 @@ class MapTracker {
               Point(coordinates: results['nearestPoint'].geometry.coordinates))
     ]).toJson());
 
-    helperLineSource ??= await _upsertSource(GeoJsonSource(
-        id: TRACK_HELPER_SOURCE_NAME, data: helperLineFeatureJson));
     await helperLineSource!.updateGeoJSON(helperLineFeatureJson);
-
-    helperPointsSource ??= await _upsertSource(GeoJsonSource(
-        id: TRACK_HELPER_POINTS_SOURCE_NAME, data: helperPointFeatureJson));
     await helperPointsSource!.updateGeoJSON(helperPointFeatureJson);
-
-    helperLineLayer ??= await _upsertLayer(LineLayer(
-        id: TRACK_HELPER_LINE_LAYER_NAME,
-        sourceId: TRACK_HELPER_SOURCE_NAME,
-        lineColor: const Color(0xffC1666B).value,
-        lineDasharray: [2, 2],
-        lineJoin: LineJoin.ROUND,
-        lineCap: LineCap.ROUND,
-        lineWidth: 5));
-    helperPointsLayer ??= await _upsertLayer(CircleLayer(
-        id: TRACK_HELPER_POINTS_LAYER_NAME,
-        sourceId: TRACK_HELPER_POINTS_SOURCE_NAME,
-        circleColor: const Color(0xffC1666B).value,
-        circleStrokeColor: const Color(0xffE4DFDA).value,
-        circleStrokeWidth: 2,
-        circleRadius: 6));
 
     if (results['distance'] <= HELPER_MAX_DISTANCE_METERS) {
       helperLineLayer!.visibility = Visibility.NONE;
@@ -127,25 +137,21 @@ class MapTracker {
       return;
     }
 
+    await map!.style.removeStyleLayer(USER_LAYER_NAME);
+    await map!.style.removeStyleSource(USER_SOURCE_NAME);
     await map!.style.removeStyleLayer(WAYPOINTS_LAYER_NAME);
     await map!.style.removeStyleSource(WAYPOINTS_SOURCE_NAME);
     await map!.style.removeStyleLayer(TRACK_LAYER_NAME);
     await map!.style.removeStyleSource(TRACK_SOURCE_NAME);
     await map!.style.removeStyleLayer(TRACK_HELPER_LINE_LAYER_NAME);
     await map!.style.removeStyleSource(TRACK_HELPER_SOURCE_NAME);
+    await map!.style.removeStyleLayer(TRACK_HELPER_POINTS_LAYER_NAME);
+    await map!.style.removeStyleSource(TRACK_HELPER_POINTS_SOURCE_NAME);
   }
 
   updateUserLocationTrack(Feature<LineString> points) async {
     final json = jsonEncode(points.toJson());
-    userRecordedSource ??=
-        await _upsertSource(GeoJsonSource(id: USER_SOURCE_NAME, data: json));
-    userRecordedLayer ??= await _upsertLayer(LineLayer(
-        id: USER_LAYER_NAME,
-        sourceId: USER_SOURCE_NAME,
-        lineColor: const Color(0xffD4B483).value,
-        lineJoin: LineJoin.ROUND,
-        lineCap: LineCap.ROUND,
-        lineWidth: 20));
+
     await userRecordedSource!.updateGeoJSON(json);
   }
 
@@ -175,6 +181,7 @@ class MapTracker {
       return definition;
     }
   }
+  
 }
 
 MapTracker tracker = MapTracker();
