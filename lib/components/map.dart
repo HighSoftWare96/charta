@@ -76,9 +76,9 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
   }
 
   _subscribeToLocation() {
-    geolocator.subscribe((location) {
+    geolocator.subscribe((update) {
       StoreProvider.of<RootState>(context)
-          .dispatch(UserLocationUpdateAction(location));
+          .dispatch(UserLocationUpdateAction(update.location, update.bearing));
     });
   }
 

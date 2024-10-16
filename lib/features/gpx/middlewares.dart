@@ -22,12 +22,17 @@ void gpxMiddleware(Store<RootState> store, action, NextDispatcher next) async {
     mapHandler.unloadGPX();
   } else if (action is UserLocationUpdateAction &&
       store.state.gpxFeature.gpx != null &&
-      store.state.locationFeature.userLocation != null) {
+      store.state.locationFeature.userLocation != null &&
+      store.state.locationFeature.userBearing != null) {
     await mapHandler.updateGPX(
-        store.state.gpxFeature.gpx!,
-        store.state.locationFeature.userLocation!,
-        store.state.mapFeature.mode == MapMode.centered);
-    await mapHandler.updateUserLocationTrack(store.state.locationFeature.userRecordedTrack);
+        gpx: store.state.gpxFeature.gpx!,
+        userLocation: store.state.locationFeature.userLocation!,
+        userBearing: store.state.locationFeature.userBearing!,
+        bearingMode: store.state.mapFeature.mode == MapMode.centered
+            ? store.state.mapFeature.bearingMode
+            : null);
+    await mapHandler
+        .updateUserLocationTrack(store.state.locationFeature.userRecordedTrack);
   }
 
   next(action);

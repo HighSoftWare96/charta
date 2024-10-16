@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:Charta/features/map/reducer.dart';
 import 'package:Charta/utils/gpx.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
@@ -35,17 +36,17 @@ const HELPER_MAX_DISTANCE_METERS = 100;
 
 class MapHandler {
   MapboxMap? map;
-  GeoJsonSource? userRecordedSource;
-  GeoJsonSource? wptSource;
-  GeoJsonSource? trackSource;
-  GeoJsonSource? helperPointsSource;
-  GeoJsonSource? helperLineSource;
+  GeoJsonSource? _userRecordedSource;
+  GeoJsonSource? _wptSource;
+  GeoJsonSource? _trackSource;
+  GeoJsonSource? _helperPointsSource;
+  GeoJsonSource? _helperLineSource;
 
-  LineLayer? userRecordedLayer;
-  CircleLayer? wptLayer;
-  LineLayer? trackLayer;
-  CircleLayer? helperPointsLayer;
-  LineLayer? helperLineLayer;
+  LineLayer? _userRecordedLayer;
+  CircleLayer? _wptLayer;
+  LineLayer? _trackLayer;
+  CircleLayer? _helperPointsLayer;
+  LineLayer? _helperLineLayer;
 
   track(MapboxMap map) {
     this.map = map;
@@ -62,13 +63,17 @@ class MapHandler {
     }
 
     final waypointJson = jsonEncode(gpx.waypoints.toJson());
-    await wptSource!.updateGeoJSON(waypointJson);
+    await _wptSource!.updateGeoJSON(waypointJson);
     final trackJson = jsonEncode(gpx.track.toJson());
-    await trackSource!.updateGeoJSON(trackJson);
+    await _trackSource!.updateGeoJSON(trackJson);
     await _toggleAllLayers(Visibility.VISIBLE);
   }
 
-  updateGPX(GeoJSONGPX gpx, Point userLocation, bool forceBearing) async {
+  updateGPX(
+      {required GeoJSONGPX gpx,
+      required Point userLocation,
+      required double userBearing,
+      required BearingMode? bearingMode}) async {
     if (map == null) {
       throw 'Invalid map state!';
     }
@@ -91,19 +96,21 @@ class MapHandler {
               Point(coordinates: results['nearestPoint'].geometry.coordinates))
     ]).toJson());
 
-    await helperLineSource!.updateGeoJSON(helperLineFeatureJson);
-    await helperPointsSource!.updateGeoJSON(helperPointFeatureJson);
+    await _helperLineSource!.updateGeoJSON(helperLineFeatureJson);
+    await _helperPointsSource!.updateGeoJSON(helperPointFeatureJson);
 
     if (results['distance'] <= HELPER_MAX_DISTANCE_METERS) {
-      helperLineLayer!.visibility = Visibility.NONE;
-      helperPointsLayer!.visibility = Visibility.NONE;
+      _helperLineLayer!.visibility = Visibility.NONE;
+      _helperPointsLayer!.visibility = Visibility.NONE;
     } else {
-      helperLineLayer!.visibility = Visibility.VISIBLE;
-      helperPointsLayer!.visibility = Visibility.VISIBLE;
+      _helperLineLayer!.visibility = Visibility.VISIBLE;
+      _helperPointsLayer!.visibility = Visibility.VISIBLE;
     }
 
-    if (forceBearing) {
+    if (bearingMode == BearingMode.followTrack) {
       map!.setCamera(CameraOptions(bearing: results['bearing']));
+    } else if (bearingMode == BearingMode.followDevice) {
+      map!.setCamera(CameraOptions(bearing: userBearing));
     }
   }
 
@@ -116,13 +123,14 @@ class MapHandler {
       throw 'Invalid map state!';
     }
 
-    if (!await map!.style.styleLayerExists(TRACK_LAYER_NAME)) {
+    if (!await map!.style.styleLayerExists(RECORDED_USER_LAYER_NAME) ||
+        !await map!.style.styleSourceExists(RECORDED_USER_SOURCE_NAME)) {
       return;
     }
 
     final json = jsonEncode(points.toJson());
 
-    await userRecordedSource!.updateGeoJSON(json);
+    await _userRecordedSource!.updateGeoJSON(json);
   }
 
   changeStyle(String styleURL, GeoJSONGPX? gpx) async {
@@ -144,25 +152,25 @@ class MapHandler {
     }
 
     // SOURCES
-    wptSource = await _upsertSource(GeoJsonSource(
+    _wptSource = await _upsertSource(GeoJsonSource(
         id: WAYPOINTS_SOURCE_NAME,
         data: jsonEncode(FeatureCollection().toJson())));
-    trackSource = await _upsertSource(GeoJsonSource(
+    _trackSource = await _upsertSource(GeoJsonSource(
         id: TRACK_SOURCE_NAME, data: jsonEncode(FeatureCollection().toJson())));
-    helperLineSource = await _upsertSource(GeoJsonSource(
+    _helperLineSource = await _upsertSource(GeoJsonSource(
         id: TRACK_HELPER_SOURCE_NAME,
         data: jsonEncode(FeatureCollection().toJson())));
-    helperPointsSource = await _upsertSource(GeoJsonSource(
+    _helperPointsSource = await _upsertSource(GeoJsonSource(
         id: TRACK_HELPER_POINTS_SOURCE_NAME,
         data: jsonEncode(FeatureCollection().toJson())));
 
     // LAYERS
-    wptLayer = await _upsertLayer(CircleLayer(
+    _wptLayer = await _upsertLayer(CircleLayer(
         id: WAYPOINTS_LAYER_NAME,
         sourceId: WAYPOINTS_SOURCE_NAME,
         circleColor: const Color(0xff48A9A6).value,
         circleRadius: 10));
-    trackLayer = await _upsertLayer(LineLayer(
+    _trackLayer = await _upsertLayer(LineLayer(
       id: TRACK_LAYER_NAME,
       sourceId: TRACK_SOURCE_NAME,
       lineColor: const Color(0xff4281A4).value,
@@ -180,7 +188,7 @@ class MapHandler {
         20
       ],
     ));
-    helperLineLayer = await _upsertLayer(LineLayer(
+    _helperLineLayer = await _upsertLayer(LineLayer(
         id: TRACK_HELPER_LINE_LAYER_NAME,
         sourceId: TRACK_HELPER_SOURCE_NAME,
         lineColor: const Color(0xffD4B483).value,
@@ -196,16 +204,16 @@ class MapHandler {
           19,
           5
         ]));
-    helperPointsLayer = await _upsertLayer(CircleLayer(
+    _helperPointsLayer = await _upsertLayer(CircleLayer(
         id: TRACK_HELPER_POINTS_LAYER_NAME,
         sourceId: TRACK_HELPER_POINTS_SOURCE_NAME,
         circleColor: const Color(0xffD4B483).value,
         circleStrokeColor: const Color(0xffE4DFDA).value,
         circleStrokeWidth: 2,
         circleRadius: 6));
-    userRecordedSource =
+    _userRecordedSource =
         await _upsertSource(GeoJsonSource(id: RECORDED_USER_SOURCE_NAME));
-    userRecordedLayer = await _upsertLayer(LineLayer(
+    _userRecordedLayer = await _upsertLayer(LineLayer(
         id: RECORDED_USER_LAYER_NAME,
         sourceId: RECORDED_USER_SOURCE_NAME,
         lineColor: const Color(0xffC1666B).value,

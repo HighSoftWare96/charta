@@ -1,3 +1,4 @@
+import 'package:Charta/components/bearingModePicker.dart';
 import 'package:Charta/components/filePicker.dart';
 import 'package:Charta/components/stylePicker.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,11 @@ class _HomeSettingsState extends State<HomeSettings> {
                       SizedBox(
                         height: 20,
                       ),
-                      StylePickerWidget()
+                      StylePickerWidget(),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      BearingModePickerWidget()
                     ],
                   ),
                 )

@@ -12,25 +12,31 @@ const RECORD_MIN_DISTANCE_METERS = 20;
 class LocationState {
   final LocationPermissionState _permissionState;
   final Point? _userLocation;
+  final double? _userBearing;
   final Feature<LineString> _userRecordedTrack;
 
   LocationPermissionState get permissionsState => _permissionState;
   Point? get userLocation => _userLocation;
+  double? get userBearing => _userBearing;
   Feature<LineString> get userRecordedTrack => _userRecordedTrack;
 
   LocationState.initialState()
       : _userRecordedTrack =
             Feature(id: '', geometry: LineString(coordinates: [])),
+        _userBearing = 0,
         _permissionState = LocationPermissionState.pending,
         _userLocation = null;
 
   LocationState.copyWith(LocationState state,
       {StoreValue<LocationPermissionState>? permissionsState,
       StoreValue<Feature<LineString>>? recorded,
+      StoreValue<double>? userBearing,
       StoreValue<Point>? userLocation})
       : _permissionState = permissionsState != null
             ? permissionsState.value
             : state._permissionState,
+        _userBearing =
+            userBearing != null ? userBearing.value : state._userBearing,
         _userRecordedTrack =
             recorded != null ? recorded.value : state._userRecordedTrack,
         _userLocation =
@@ -64,6 +70,7 @@ LocationState locationReducer(RootState state, dynamic action) {
     return LocationState.copyWith(state.locationFeature,
         recorded: StoreValue.of(recorded),
         permissionsState: const StoreValue.of(LocationPermissionState.accepted),
+        userBearing: StoreValue.of(action.bearing),
         userLocation: StoreValue.of(action.location));
   } else if (action is UnloadGPXFileAction ||
       action is LoadGPXFileSuccessAction) {

@@ -12,8 +12,9 @@ class RequestLocationActionSuccess {}
 
 class UserLocationUpdateAction {
   Point location;
+  double bearing;
 
-  UserLocationUpdateAction(this.location);
+  UserLocationUpdateAction(this.location, this.bearing);
 }
 
 class RequestLocationActionError extends ErrorAction {

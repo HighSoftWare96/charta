@@ -48,7 +48,10 @@ class _StylePickerWidgetState extends State<StylePickerWidget> {
               children: [
                 const Text(
                   'Map style',
-                  style: TextStyle(color: Color(0xff4281A4), fontSize: 15, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      color: Color(0xff4281A4),
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(
                   height: 20,
@@ -94,7 +97,7 @@ class _StylePickerWidgetState extends State<StylePickerWidget> {
                                           color: store.state.mapFeature
                                                       .mapStyleURL ==
                                                   style.styleURL
-                                              ? Colors.black45
+                                              ? const Color(0xff4281A4)
                                               : Colors.black26),
                                     ))
                               ])))
