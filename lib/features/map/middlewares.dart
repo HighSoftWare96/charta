@@ -34,7 +34,6 @@ void _centerMapToUserLocation(Point location, MapAnimationOptions? animations) {
 
 _fitGpx(GeoJSONGPX gpx, MapAnimationOptions? animations) async {
   final bboxResult = turf.bbox(gpx.track).toJson();
-  // TODO: fix box
   final options = await mapHandler.map!.cameraForCoordinateBounds(
       CoordinateBounds(
           southwest:
@@ -42,7 +41,7 @@ _fitGpx(GeoJSONGPX gpx, MapAnimationOptions? animations) async {
           northeast:
               Point(coordinates: Position(bboxResult[2], bboxResult[3])),
           infiniteBounds: false),
-      MbxEdgeInsets(top: 0, left: 0, bottom: 0, right: 0),
+      MbxEdgeInsets(top: 0, left: 10, bottom: 0, right: 10),
       0,
       0,
       null,

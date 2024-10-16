@@ -198,6 +198,7 @@ class MapHandler {
       if (await map!.style.styleLayerExists(layerName)) {
         final layer = await map!.style.getLayer(layerName);
         layer!.visibility = visibility;
+        await map!.style.updateLayer(layer);
       }
     }
   }
