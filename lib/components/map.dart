@@ -1,7 +1,7 @@
 import 'package:Charta/features/location/actions.dart';
 import 'package:Charta/features/map/actions.dart';
 import 'package:Charta/services/geolocator.dart';
-import 'package:Charta/services/mapTracker.dart';
+import 'package:Charta/services/mapHandler.dart';
 import 'package:Charta/store/reducer.dart';
 import 'package:Charta/utils/defaults.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
 
   void _onMapCreated(RootState state, MapboxMap map) async {
     mapboxMap = map;
-    tracker.track(map);
+    mapHandler.track(map);
 
     const expression = '["interpolate",["linear"],["zoom"],15,0.2,19,0.45]';
     final bearingBytes = await rootBundle.load('assets/images/navigation.png');
@@ -46,6 +46,8 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
 
     _setBearingMode(state);
     _subscribeToLocation();
+
+    await mapHandler.setup();
   }
 
   void _onUserChangesCamera(dynamic event) {
@@ -54,7 +56,7 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
   }
 
   void _onCameraChanges(CameraChangedEventData event) async {
-    final camera = await tracker.map!.getCameraState();
+    final camera = await mapHandler.map!.getCameraState();
     StoreProvider.of<RootState>(context)
         .dispatch(MapBoundsUpdateAction(camera));
   }
