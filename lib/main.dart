@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
     return StoreProvider(
         store: store,
         child: MaterialApp(
-          title: 'Flutter Demo',
+          title: 'Charta',
           theme: ThemeData(
             // This is the theme of your application.
             //
