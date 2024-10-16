@@ -1,4 +1,5 @@
 import 'package:Charta/components/filePicker.dart';
+import 'package:Charta/components/stylePicker.dart';
 import 'package:flutter/material.dart';
 
 class HomeSettings extends StatefulWidget {
@@ -11,39 +12,48 @@ class HomeSettings extends StatefulWidget {
 class _HomeSettingsState extends State<HomeSettings> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-        height: 500,
-        width: double.infinity,
-        decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(20),
-              topRight: Radius.circular(20),
-            )),
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Container(
-                width: 100,
-                height: 8,
-                decoration: BoxDecoration(
-                    color: Colors.grey.withAlpha(50),
-                    borderRadius: const BorderRadius.all(Radius.circular(20))),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                  bottom: 10,
-                  top: 30,
-                  left: 10,
-                  right: 10,
+    return LayoutBuilder(builder: (context, constraints) {
+      return Container(
+          height: MediaQuery.sizeOf(context).height,
+          width: double.infinity,
+          decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
+              )),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                Container(
+                  width: 100,
+                  height: 8,
+                  decoration: BoxDecoration(
+                      color: Colors.grey.withAlpha(50),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(20))),
                 ),
-                child: Column(
-                  children: [FilePickerWidget()],
-                ),
-              )
-            ],
-          ),
-        ));
+                const Padding(
+                  padding: EdgeInsets.only(
+                    bottom: 10,
+                    top: 30,
+                    left: 10,
+                    right: 10,
+                  ),
+                  child: Column(
+                    children: [
+                      FilePickerWidget(),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      StylePickerWidget()
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ));
+    });
   }
 }

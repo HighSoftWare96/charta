@@ -11,23 +11,14 @@ class GPXState {
   final PlatformFile? _file;
   final GPXStatus _status;
   final GeoJSONGPX? _gpx;
-  final Feature<Point>? _nearestPointOnTrack;
-  final double? _nearestPointDistance;
-  final double? _nearestPointBearing;
 
   PlatformFile? get file => _file;
   GPXStatus? get status => _status;
   GeoJSONGPX? get gpx => _gpx;
-  Feature<Point>? get nearestPointOnTrack => _nearestPointOnTrack;
-  double? get nearestPointBearing => _nearestPointBearing;
-  double? get nearestPointDistance => _nearestPointDistance;
 
   GPXState.initialState()
       : _file = null,
         _gpx = null,
-        _nearestPointBearing = null,
-        _nearestPointDistance = null,
-        _nearestPointOnTrack = null,
         _status = GPXStatus.none;
 
   GPXState.copyWith(GPXState state,
@@ -39,15 +30,6 @@ class GPXState {
       StoreValue<GeoJSONGPX?>? gpx})
       : _file = file != null ? file.value : state._file,
         _gpx = gpx != null ? gpx.value : state.gpx,
-        _nearestPointBearing = nearestPointBearing != null
-            ? nearestPointBearing.value
-            : state.nearestPointBearing,
-        _nearestPointOnTrack = nearestPointOnTrack != null
-            ? nearestPointOnTrack.value
-            : state.nearestPointOnTrack,
-        _nearestPointDistance = nearestPointDistance != null
-            ? nearestPointDistance.value
-            : state.nearestPointDistance,
         _status = status != null ? status.value : state._status;
 }
 

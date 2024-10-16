@@ -94,7 +94,7 @@ class _MapWidgetWrapperState extends State<MapWidgetWrapper> {
 
         return MapWidget(
           key: const ValueKey("mapWidget"),
-          styleUri: 'mapbox://styles/gbertoncelli/cm1t9t9na00wy01qrea9w5nlt',
+          styleUri: store.state.mapFeature.mapStyleURL,
           cameraOptions: camera,
           onScrollListener: _onUserChangesCamera,
           onTapListener: _onUserChangesCamera,

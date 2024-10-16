@@ -6,25 +6,25 @@ import 'dart:ui';
 import 'package:Charta/utils/gpx.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
-const USER_SOURCE_NAME = 'user_location_source';
-const USER_LAYER_NAME = 'user_location_layer';
+const RECORDED_USER_SOURCE_NAME = 'user_location_source';
+const RECORDED_USER_LAYER_NAME = 'user_location_layer';
 const WAYPOINTS_SOURCE_NAME = 'gpx_wpts_source';
 const WAYPOINTS_LAYER_NAME = 'gpx_wpts';
 const TRACK_SOURCE_NAME = 'gpx_track_source';
+const TRACK_LAYER_NAME = 'gpx_track';
 const TRACK_HELPER_SOURCE_NAME = 'gpx_track_helper_source';
 const TRACK_HELPER_LINE_LAYER_NAME = 'gpx_track_helper_line_layer';
 const TRACK_HELPER_POINTS_SOURCE_NAME = 'gpx_track_helper_points_source';
 const TRACK_HELPER_POINTS_LAYER_NAME = 'gpx_track_helper_points_layer';
-const TRACK_LAYER_NAME = 'gpx_track';
 const LAYERS = [
-  USER_LAYER_NAME,
+  RECORDED_USER_LAYER_NAME,
   WAYPOINTS_LAYER_NAME,
   TRACK_HELPER_LINE_LAYER_NAME,
   TRACK_HELPER_POINTS_LAYER_NAME,
   TRACK_LAYER_NAME
 ];
 const SOURCES = [
-  USER_SOURCE_NAME,
+  RECORDED_USER_SOURCE_NAME,
   WAYPOINTS_SOURCE_NAME,
   TRACK_SOURCE_NAME,
   TRACK_HELPER_SOURCE_NAME,
@@ -73,6 +73,10 @@ class MapHandler {
       throw 'Invalid map state!';
     }
 
+    if (!await map!.style.styleLayerExists(TRACK_LAYER_NAME)) {
+      return;
+    }
+
     final results = gpx.nearestPointToTrack(userLocation);
     final helperLineFeatureJson = jsonEncode(Feature(
         id: '',
@@ -108,9 +112,30 @@ class MapHandler {
   }
 
   updateUserLocationTrack(Feature<LineString> points) async {
+    if (map == null) {
+      throw 'Invalid map state!';
+    }
+
+    if (!await map!.style.styleLayerExists(TRACK_LAYER_NAME)) {
+      return;
+    }
+
     final json = jsonEncode(points.toJson());
 
     await userRecordedSource!.updateGeoJSON(json);
+  }
+
+  changeStyle(String styleURL, GeoJSONGPX? gpx) async {
+    if (map == null) {
+      throw 'Invalid map state!';
+    }
+
+    await map!.style.setStyleURI(styleURL);
+    await setup();
+
+    if (gpx != null) {
+      await loadGPX(gpx);
+    }
   }
 
   _setupAllLayers() async {
@@ -119,25 +144,25 @@ class MapHandler {
     }
 
     // SOURCES
-    wptSource ??= await _upsertSource(GeoJsonSource(
+    wptSource = await _upsertSource(GeoJsonSource(
         id: WAYPOINTS_SOURCE_NAME,
         data: jsonEncode(FeatureCollection().toJson())));
-    trackSource ??= await _upsertSource(GeoJsonSource(
+    trackSource = await _upsertSource(GeoJsonSource(
         id: TRACK_SOURCE_NAME, data: jsonEncode(FeatureCollection().toJson())));
-    helperLineSource ??= await _upsertSource(GeoJsonSource(
+    helperLineSource = await _upsertSource(GeoJsonSource(
         id: TRACK_HELPER_SOURCE_NAME,
         data: jsonEncode(FeatureCollection().toJson())));
-    helperPointsSource ??= await _upsertSource(GeoJsonSource(
+    helperPointsSource = await _upsertSource(GeoJsonSource(
         id: TRACK_HELPER_POINTS_SOURCE_NAME,
         data: jsonEncode(FeatureCollection().toJson())));
 
     // LAYERS
-    wptLayer ??= await _upsertLayer(CircleLayer(
+    wptLayer = await _upsertLayer(CircleLayer(
         id: WAYPOINTS_LAYER_NAME,
         sourceId: WAYPOINTS_SOURCE_NAME,
         circleColor: const Color(0xff48A9A6).value,
         circleRadius: 10));
-    trackLayer ??= await _upsertLayer(LineLayer(
+    trackLayer = await _upsertLayer(LineLayer(
       id: TRACK_LAYER_NAME,
       sourceId: TRACK_SOURCE_NAME,
       lineColor: const Color(0xff4281A4).value,
@@ -155,34 +180,34 @@ class MapHandler {
         20
       ],
     ));
-    helperLineLayer ??= await _upsertLayer(LineLayer(
+    helperLineLayer = await _upsertLayer(LineLayer(
         id: TRACK_HELPER_LINE_LAYER_NAME,
         sourceId: TRACK_HELPER_SOURCE_NAME,
         lineColor: const Color(0xffD4B483).value,
         lineDasharray: [2, 2],
         lineJoin: LineJoin.ROUND,
         lineCap: LineCap.ROUND,
-              lineWidthExpression: [
-        'interpolate',
-        ['linear'],
-        ['zoom'],
-        15,
-        3,
-        19,
-        5
-      ]));
-    helperPointsLayer ??= await _upsertLayer(CircleLayer(
+        lineWidthExpression: [
+          'interpolate',
+          ['linear'],
+          ['zoom'],
+          15,
+          3,
+          19,
+          5
+        ]));
+    helperPointsLayer = await _upsertLayer(CircleLayer(
         id: TRACK_HELPER_POINTS_LAYER_NAME,
         sourceId: TRACK_HELPER_POINTS_SOURCE_NAME,
         circleColor: const Color(0xffD4B483).value,
         circleStrokeColor: const Color(0xffE4DFDA).value,
         circleStrokeWidth: 2,
         circleRadius: 6));
-    userRecordedSource ??=
-        await _upsertSource(GeoJsonSource(id: USER_SOURCE_NAME));
-    userRecordedLayer ??= await _upsertLayer(LineLayer(
-        id: USER_LAYER_NAME,
-        sourceId: USER_SOURCE_NAME,
+    userRecordedSource =
+        await _upsertSource(GeoJsonSource(id: RECORDED_USER_SOURCE_NAME));
+    userRecordedLayer = await _upsertLayer(LineLayer(
+        id: RECORDED_USER_LAYER_NAME,
+        sourceId: RECORDED_USER_SOURCE_NAME,
         lineColor: const Color(0xffC1666B).value,
         lineJoin: LineJoin.ROUND,
         lineCap: LineCap.ROUND,

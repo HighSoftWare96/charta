@@ -9,3 +9,9 @@ class MapBoundsUpdateAction {
 
   MapBoundsUpdateAction(this.camera);
 }
+
+class ChangeMapStyleAction {
+  String styleURL;
+
+  ChangeMapStyleAction(this.styleURL);
+}

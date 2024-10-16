@@ -22,6 +22,8 @@ void mapMiddleware(Store<RootState> store, action, NextDispatcher next) async {
       store.state.mapFeature.mode == MapMode.centered &&
       store.state.locationFeature.userLocation != null) {
     _centerMapToUserLocation(store.state.locationFeature.userLocation!, null);
+  } else if (action is ChangeMapStyleAction) {
+    mapHandler.changeStyle(action.styleURL, store.state.gpxFeature.gpx);
   }
 
   next(action);
@@ -36,10 +38,8 @@ _fitGpx(GeoJSONGPX gpx, MapAnimationOptions? animations) async {
   final bboxResult = turf.bbox(gpx.track).toJson();
   final options = await mapHandler.map!.cameraForCoordinateBounds(
       CoordinateBounds(
-          southwest:
-              Point(coordinates: Position(bboxResult[0], bboxResult[1])),
-          northeast:
-              Point(coordinates: Position(bboxResult[2], bboxResult[3])),
+          southwest: Point(coordinates: Position(bboxResult[0], bboxResult[1])),
+          northeast: Point(coordinates: Position(bboxResult[2], bboxResult[3])),
           infiniteBounds: false),
       MbxEdgeInsets(top: 0, left: 10, bottom: 0, right: 10),
       0,
