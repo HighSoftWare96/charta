@@ -1,6 +1,7 @@
 import 'package:Charta/features/gpx/actions.dart';
 import 'package:Charta/features/gpx/reducer.dart';
 import 'package:Charta/store/reducer.dart';
+import 'package:Charta/utils/variables.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -40,13 +41,12 @@ class _FilePickerWidgetState extends State<FilePickerWidget> {
               if (store.state.gpxFeature.status != GPXStatus.pending)
                 Icon(
                   Icons.map,
-                  color: store.state.gpxFeature.file != null
-                      ? const Color(0xff4281A4)
-                      : Colors.black26,
+                  color:
+                      store.state.gpxFeature.file != null ? accent : textMuted,
                 )
               else
-                const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation(Color(0xff4281A4))),
+                CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation(accent)),
               Container(
                 width: 10,
               ),
@@ -59,49 +59,49 @@ class _FilePickerWidgetState extends State<FilePickerWidget> {
                       Text(
                         store.state.gpxFeature.gpx != null &&
                                 store.state.gpxFeature.gpx!.gpx.metadata != null
-                            ? store.state.gpxFeature.gpx!.gpx.metadata!.name! 
+                            ? store.state.gpxFeature.gpx!.gpx.metadata!.name!
                             : (store.state.gpxFeature.file != null
                                 ? store.state.gpxFeature.file!.name
                                 : 'Choose GPX file...'),
                         overflow: TextOverflow.ellipsis,
                         style: store.state.gpxFeature.file != null
-                            ? const TextStyle(
-                              fontSize: 20,
-                                color: Color(0xff4281A4),
+                            ? TextStyle(
+                                fontSize: 20,
+                                color: accent,
                                 fontWeight: FontWeight.bold)
-                            : const TextStyle(color: Colors.black26),
+                            : TextStyle(color: textMuted),
                       ),
                       if (store.state.gpxFeature.status == GPXStatus.pending)
-                        const Text('Loading file...',
+                        Text('Loading file...',
                             style: TextStyle(
-                              color: Colors.black26,
+                              color: text,
                             )),
                       if (store.state.gpxFeature.status == GPXStatus.loaded)
-                        const Text('Following',
+                        Text('Following',
                             style: TextStyle(
-                              color: Colors.black26,
+                              color: text,
                             )),
                       if (store.state.gpxFeature.status == GPXStatus.error)
-                        const Text('Unable to load file, retry!',
+                        Text('Unable to load file, retry!',
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
-                              color: Color(0xffC1666B),
+                              color: danger,
                             ))
                     ]),
               )
             ]),
             store.state.gpxFeature.file != null
                 ? IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.close,
-                      color: Color(0xff4281A4),
+                      color: accent,
                     ),
                     onPressed: _unsetFile,
                   )
                 : ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.white,
-                      backgroundColor: const Color(0xff4281A4),
+                      foregroundColor: text,
+                      backgroundColor: accent,
                       elevation: 0,
                     ),
                     onPressed: _pickFile,

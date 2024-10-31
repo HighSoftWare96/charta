@@ -68,7 +68,7 @@ class _HomeState extends State<Home> {
                     builder: (context, scrollController) {
                       return SingleChildScrollView(
                         controller: scrollController,
-                        child: HomeSettings(),
+                        child: const HomeSettings(),
                       );
                     },
                   )

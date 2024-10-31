@@ -5,6 +5,7 @@ import 'dart:ui';
 
 import 'package:Charta/features/map/reducer.dart';
 import 'package:Charta/utils/gpx.dart';
+import 'package:Charta/utils/variables.dart';
 import 'package:mapbox_maps_flutter/mapbox_maps_flutter.dart';
 
 const RECORDED_USER_SOURCE_NAME = 'user_location_source';
@@ -168,12 +169,12 @@ class MapHandler {
     _wptLayer = await _upsertLayer(CircleLayer(
         id: WAYPOINTS_LAYER_NAME,
         sourceId: WAYPOINTS_SOURCE_NAME,
-        circleColor: const Color(0xff48A9A6).value,
+        circleColor: success.value,
         circleRadius: 10));
     _trackLayer = await _upsertLayer(LineLayer(
       id: TRACK_LAYER_NAME,
       sourceId: TRACK_SOURCE_NAME,
-      lineColor: const Color(0xff4281A4).value,
+      lineColor: accent.value,
       lineBorderColor: const Color(0xffE4DFDA).value,
       lineBorderWidth: 3,
       lineJoin: LineJoin.ROUND,
@@ -191,7 +192,7 @@ class MapHandler {
     _helperLineLayer = await _upsertLayer(LineLayer(
         id: TRACK_HELPER_LINE_LAYER_NAME,
         sourceId: TRACK_HELPER_SOURCE_NAME,
-        lineColor: const Color(0xffD4B483).value,
+        lineColor: warning.value,
         lineDasharray: [2, 2],
         lineJoin: LineJoin.ROUND,
         lineCap: LineCap.ROUND,
@@ -207,7 +208,7 @@ class MapHandler {
     _helperPointsLayer = await _upsertLayer(CircleLayer(
         id: TRACK_HELPER_POINTS_LAYER_NAME,
         sourceId: TRACK_HELPER_POINTS_SOURCE_NAME,
-        circleColor: const Color(0xffD4B483).value,
+        circleColor: warning.value,
         circleStrokeColor: const Color(0xffE4DFDA).value,
         circleStrokeWidth: 2,
         circleRadius: 6));
@@ -216,7 +217,7 @@ class MapHandler {
     _userRecordedLayer = await _upsertLayer(LineLayer(
         id: RECORDED_USER_LAYER_NAME,
         sourceId: RECORDED_USER_SOURCE_NAME,
-        lineColor: const Color(0xffC1666B).value,
+        lineColor: danger.value,
         lineJoin: LineJoin.ROUND,
         lineCap: LineCap.ROUND,
         lineWidth: 20));

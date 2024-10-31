@@ -1,5 +1,6 @@
 import 'package:Charta/features/map/actions.dart';
 import 'package:Charta/store/reducer.dart';
+import 'package:Charta/utils/variables.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
@@ -46,10 +47,10 @@ class _StylePickerWidgetState extends State<StylePickerWidget> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Map style',
                   style: TextStyle(
-                      color: Color(0xff4281A4),
+                      color: accent,
                       fontSize: 15,
                       fontWeight: FontWeight.bold),
                 ),
@@ -72,7 +73,7 @@ class _StylePickerWidgetState extends State<StylePickerWidget> {
                                       color:
                                           store.state.mapFeature.mapStyleURL ==
                                                   style.styleURL
-                                              ? const Color(0xff4281A4)
+                                              ? accent
                                               : Colors.transparent,
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(10)),
@@ -97,8 +98,8 @@ class _StylePickerWidgetState extends State<StylePickerWidget> {
                                           color: store.state.mapFeature
                                                       .mapStyleURL ==
                                                   style.styleURL
-                                              ? const Color(0xff4281A4)
-                                              : Colors.black26),
+                                              ? accent
+                                              : textMuted),
                                     ))
                               ])))
                   ],

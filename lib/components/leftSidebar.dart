@@ -1,6 +1,7 @@
 import 'package:Charta/features/map/actions.dart';
 import 'package:Charta/features/map/reducer.dart';
 import 'package:Charta/store/reducer.dart';
+import 'package:Charta/utils/variables.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
@@ -35,16 +36,16 @@ class _LeftSidebarWidgetState extends State<LeftSidebarWidget> {
                         style: ElevatedButton.styleFrom(
                             shape: const CircleBorder(),
                             padding: const EdgeInsets.all(20),
-                            backgroundColor: const Color(0xfff4f2f0)),
+                            backgroundColor: surface),
                         child: Icon(
                             store.state.mapFeature.mode == MapMode.centered
                                 ? Icons.route
                                 : Icons.navigation,
                             color: store.state.mapFeature.mode == MapMode.centered
                                 ? (store.state.gpxFeature.file != null
-                                    ? Colors.black38
-                                    : Colors.black26)
-                                : const Color(0xff4281A4)),
+                                    ? text
+                                    : textMuted)
+                                : accent),
                       ),
                     ],
                   ),

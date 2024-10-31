@@ -17,8 +17,11 @@ class GeoJSONGPX {
   FeatureCollection<Point> trackPoints;
 
   factory GeoJSONGPX(Gpx gpx) {
-    return GeoJSONGPX._internal(gpx, _getGeoJSONWptsFeatureCollection(gpx),
-        _getGeoJSONLineFeature(gpx), _getGeoJSONPointFeatureCollection(gpx));
+    final wpts = _getGeoJSONWptsFeatureCollection(gpx);
+    final trackLine = _getGeoJSONLineFeature(gpx);
+    final trackFeature = _getGeoJSONPointFeatureCollection(gpx);
+
+    return GeoJSONGPX._internal(gpx, wpts, trackLine, trackFeature);
   }
 
   GeoJSONGPX._internal(this.gpx, this.waypoints, this.track, this.trackPoints);
@@ -75,6 +78,8 @@ FeatureCollection<Point> _getGeoJSONPointFeatureCollection(Gpx gpx) {
   FeatureCollection<Point> geoJSON = FeatureCollection();
   List<Feature<Point>> features = [];
 
+  var startingPoint = gpx.trks.first.trksegs.first.trkpts.first;
+
   for (var seg in gpx.trks.first.trksegs) {
     for (var wpt in seg.trkpts) {
       features.add(_toFeaturePoint(wpt));
@@ -85,7 +90,10 @@ FeatureCollection<Point> _getGeoJSONPointFeatureCollection(Gpx gpx) {
   return geoJSON;
 }
 
-Feature<Point> _toFeaturePoint(Wpt wpt) {
+Feature<Point> _toFeaturePoint(Wpt wpt,
+    {Map<String, dynamic> properties = const {}}) {
   return Feature(
-      id: '', geometry: Point(coordinates: Position(wpt.lon!, wpt.lat!)));
+      id: '',
+      properties: properties,
+      geometry: Point(coordinates: Position(wpt.lon!, wpt.lat!)));
 }

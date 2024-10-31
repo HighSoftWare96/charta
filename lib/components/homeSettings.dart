@@ -1,6 +1,7 @@
 import 'package:Charta/components/bearingModePicker.dart';
 import 'package:Charta/components/filePicker.dart';
 import 'package:Charta/components/stylePicker.dart';
+import 'package:Charta/utils/variables.dart';
 import 'package:flutter/material.dart';
 
 class HomeSettings extends StatefulWidget {
@@ -17,9 +18,9 @@ class _HomeSettingsState extends State<HomeSettings> {
       return Container(
           height: MediaQuery.sizeOf(context).height,
           width: double.infinity,
-          decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
+          decoration: BoxDecoration(
+              color: surface,
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
               )),
@@ -31,7 +32,7 @@ class _HomeSettingsState extends State<HomeSettings> {
                   width: 100,
                   height: 8,
                   decoration: BoxDecoration(
-                      color: Colors.grey.withAlpha(50),
+                      color: surface,
                       borderRadius:
                           const BorderRadius.all(Radius.circular(20))),
                 ),
